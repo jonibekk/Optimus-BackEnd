@@ -2,10 +2,12 @@
 
 namespace App\AppService;
 
+use App\Enums\Likes\LikableType;
 use App\Models\ActionPosts;
 use App\Models\TeamMembers;
 use App\Models\User;
 use App\Models\Goal;
+use App\Models\Like;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Exception;
@@ -17,8 +19,8 @@ class MeService
         $user = auth()->user();
 
         try {
-            $data = ActionPosts::
-                with([
+            $posts = ActionPosts::with(
+                [
                     'user:id,first_name,last_name,avatar_url',
                     'goal:id,name,description,color,progress,completed',
                     'keyResult:id,name,unit,currency_type,current_value,target_value,progress',
@@ -26,11 +28,22 @@ class MeService
                 ])
                 ->where('team_id', $user['current_team_id'])
                 ->orderBy('created_at', 'desc')->get();
+
+            foreach ($posts as $post) {
+                $likes = Like::select('id', 'user_id', 'likeable_id')
+                    ->where('likeable_id', $post['id'])
+                    ->where('likeable_type', LikableType::POST_LIKE)
+                    ->where('del_flg', false)
+                    ->get();
+
+                $post['likes_count'] = count($likes);
+                $post['likes'] = $likes;
+            }
         } catch (Exception $ex) {
             throw new Exception($ex);
         }
 
-        return $data;
+        return $posts;
     }
 
     public function getTeamsBelongToUser(int $userId) {

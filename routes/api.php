@@ -98,6 +98,8 @@ Route::group(['middleware' => 'api'], function () {
         Route::post('/upload', [ActionsController::class, 'fileUpload']);
 
         Route::post('/{id}/update', [ActionsController::class, 'update']);
+        Route::post('/{id}/like', [ActionsController::class, 'postLike']);
+        Route::post('/{id}/comment', [ActionsController::class, 'postComment']);
 
         Route::delete('/{id}/delete', [ActionsController::class, 'delete']);
     });

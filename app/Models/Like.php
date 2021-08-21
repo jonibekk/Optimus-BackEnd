@@ -10,13 +10,19 @@ class Like extends BaseModel
 
     protected $table = 'likes';
 
-    public function action()
-    {
-        return $this->morphedByMany(ActionPosts::class, 'likable');
-    }
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'user_id',
+        'likeable_id',
+        'likeable_type',
+    ];
 
-    public function user()
+    public function likeable()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->morphTo();
     }
 }

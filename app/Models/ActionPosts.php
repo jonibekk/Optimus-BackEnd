@@ -53,12 +53,12 @@ class ActionPosts extends BaseModel
     
     public function comment()
     {
-        return $this->morphToMany(Comments::class, 'commentable');
+        return $this->hasMany(Comments::class);
     }
 
     public function like()
     {
-        return $this->morphToMany(Like::class, 'likable');
+        return $this->morphMany(Like::class, 'likeable', 'likeable_type');
     }
 
 }
