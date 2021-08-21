@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use App\AppService\ActionsService;
 use App\Dto\ActionDto;
 use App\Dto\ResponseDto;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Exception;
 
 class ActionsController extends Controller
 {
@@ -145,7 +146,7 @@ class ActionsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function delete($id)
     {
         $response = new ResponseDto();
         $actionService = new ActionsService();
@@ -158,6 +159,51 @@ class ActionsController extends Controller
         } catch (Exception $ex) {
             $response->success = false;
             $response->message = $ex->getMessage();
+            return response($response->toArray(), 500);
+        }
+
+        return response($response->toArray(), 200);
+    }
+
+    /**
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function postLike(Request $request, $id)
+    {
+        $response = new ResponseDto();
+        $actionService = new ActionsService();
+
+        $validator = Validator::make($request->all(), [
+            'status' => [
+                'required',
+                Rule::in(['like', 'dislike'])
+            ]
+        ]);
+        if ($validator->fails()) {
+            $response->success = false;
+            $response->data = $validator->getMessageBag();
+            return response($response->toArray(), 400);
+        }
+
+        $userId = auth()->id();
+        $status = $request['status'];
+        $likeId = $request['like_id'];
+
+        try {
+            // return response(['like' => $actionService->likeActionPost($id, $userId, $status, $likeId)], 500);
+            $response->success = $actionService->likeActionPost($id, $userId, $status, $likeId);
+
+            if ($response->success === false) {
+                $response->message = 'Something went wrong! Please, try again.';
+                return response($response->toArray(), 500);
+            }
+
+            $response->message = 'Liked successfully!';
+        } catch (Exception $e) {
+            $response->success = false;
+            $response->message = $e->getMessage();
             return response($response->toArray(), 500);
         }
 

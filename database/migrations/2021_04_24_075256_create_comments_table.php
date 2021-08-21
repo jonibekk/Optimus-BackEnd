@@ -16,6 +16,7 @@ class CreateCommentsTable extends Migration
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
+            $table->foreignId('action_post_id');
             $table->text('body');
             $table->boolean('del_flg')->default(false);
             $table->timestamp('deleted_at')->nullable();

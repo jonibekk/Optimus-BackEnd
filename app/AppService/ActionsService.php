@@ -5,11 +5,14 @@ namespace App\AppService;
 use App\Dto\ActionDto;
 use App\Enums\FileUpload\AttachedFileType;
 use App\Enums\FileUpload\FileUploadType;
+use App\Enums\Likes\LikableType;
 use App\Models\ActionFiles;
 use App\Models\ActionPosts;
 use App\Models\KeyResults;
-use Exception;
+use App\Models\Likable;
+use App\Models\Like;
 use Illuminate\Support\Facades\DB;
+use Exception;
 
 class ActionsService
 {
@@ -140,6 +143,51 @@ class ActionsService
         $acion['deleted_at'] = now();
 
         return $acion->save();
+    }
+
+    // Like Action Post
+    public function likeActionPost(int $postId, int $userId, string $status, int $likeId)
+    {
+        if ($status === 'like') {
+            // LIKE
+
+            $like = Like::where('user_id', $userId)->where('likeable_id', $postId)->first();
+
+            if (empty($like)) {
+                return $this->createNewPostLike($postId, $userId);
+            } else {
+                $like['del_flg'] = false;
+                $like['deleted_at'] = null;
+
+                return $like->save();
+            }
+        } else {
+            // DISLIKE
+            if ($likeId === -1) {
+                return false;
+            }
+
+            $like = Like::where('id', $likeId)->first();
+            $like['del_flg'] = true;
+            $like['deleted_at'] = now();
+
+            return $like->save();
+        }
+
+        return true;
+    }
+
+    // Create New Like
+    public function createNewPostLike(int $postId, int $userId)
+    {
+        $newLikable = new Like([
+            'user_id' => $userId,
+            'likeable_id' => $postId,
+            'likeable_type' => LikableType::POST_LIKE,
+        ]);
+        $newLikable->save();
+
+        return true;
     }
 
     // HardDelete an Action
