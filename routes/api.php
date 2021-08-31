@@ -92,6 +92,7 @@ Route::group(['middleware' => 'api'], function () {
     Route::prefix('action')->group(function () {
         Route::get('/team/{teamId}/user/{userId}/all', [ActionsController::class, 'getUserActions']);
         Route::get('/kr/{krId}/all', [ActionsController::class, 'getKrActions']);
+        Route::get('/{id}/details', [ActionsController::class, 'getPostDetails']);
 
         Route::post('/goal/{goalId}/kr/{krId}/create', [ActionsController::class, 'create']);
 

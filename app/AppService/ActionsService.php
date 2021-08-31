@@ -9,7 +9,6 @@ use App\Enums\Likes\LikableType;
 use App\Models\ActionFiles;
 use App\Models\ActionPosts;
 use App\Models\KeyResults;
-use App\Models\Likable;
 use App\Models\Like;
 use Illuminate\Support\Facades\DB;
 use Exception;
@@ -26,6 +25,35 @@ class ActionsService
     public function getKrActions(int $krId)
     {
         return KeyResults::find($krId)->action;
+    }
+
+    // Get Post Details
+    public function getPostDetails(int $postId)
+    {
+        try {
+            $PostDetails = ActionPosts::with(
+                [
+                    'user:id,first_name,last_name,avatar_url',
+                    'goal:id,name,description,color,progress,completed',
+                    'keyResult:id,name,unit,currency_type,current_value,target_value,progress',
+                    'attachedFile:id,filename,file_ext,file_url,file_size,file_type',
+                    'comment:id,user_id,body',
+                ]
+            )->where('id', $postId)->first();
+
+            $likes = Like::select('id', 'user_id', 'likeable_id')
+            ->where('likeable_id', $postId)
+            ->where('likeable_type', LikableType::POST_LIKE)
+            ->where('del_flg', false)
+                ->get();
+
+            $PostDetails['likes_count'] = count($likes);
+            $PostDetails['likes'] = $likes;
+        } catch (Exception $ex) {
+            throw new Exception($ex);
+        }
+
+        return $PostDetails;
     }
 
     // Create an Action

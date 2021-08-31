@@ -53,7 +53,7 @@ class ActionPosts extends BaseModel
     
     public function comment()
     {
-        return $this->hasMany(Comments::class);
+        return $this->hasMany(Comments::class, 'action_post_id', 'id');
     }
 
     public function like()

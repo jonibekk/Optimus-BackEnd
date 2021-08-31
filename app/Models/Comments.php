@@ -12,7 +12,7 @@ class Comments extends BaseModel
 
     public function action()
     {
-        return $this->morphedByMany(ActionPosts::class, 'commentable');
+        return $this->belongsTo(ActionPosts::class, 'action_post_id', 'id');
     }
 
     public function user()

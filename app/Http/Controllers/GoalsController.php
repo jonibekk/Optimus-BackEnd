@@ -263,15 +263,14 @@ class GoalsController extends Controller
     {
         $response = new ResponseDto();
         $goalService = new GoalsService();
-        
-        $user = auth()->user();
-        $userId = $user['id'];
-        $teamId = $user['current_team_id'];
+
+        $userId = $request['userId'];
+        $teamId = $request['teamId'];
 
         try {
-            if ($goalService->isGoalInTeam($id, $teamId) && !$goalService->isUserGoalMember($user['id'], $id)) {
+            if ($goalService->isGoalInTeam($id, $teamId) && !$goalService->isUserGoalMember($userId, $id)) {
                 $response->success = $goalService->subscribeToGoal($id, $userId, $teamId, GoalMemberType::GOAL_MEMBER);
-                $response->message = 'Subscribted!';
+                $response->message = 'Subscribed!';
             } else {
                 $response->success = false;
                 $response->message = 'Goal not found!';

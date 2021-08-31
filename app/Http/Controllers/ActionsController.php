@@ -59,6 +59,28 @@ class ActionsController extends Controller
 
     /**
      *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getPostDetails(int $id)
+    {
+        $actionService = new ActionsService();
+        $response = new ResponseDto();
+
+        try {
+            $response->data = $actionService->getPostDetails($id);
+            $response->success = true;
+        } catch (Exception $ex) {
+            $response->success = false;
+            $response->message = $ex->getMessage();
+            return response($response->toArray(), 500);
+        }
+
+        return response($response->toArray(), 200);
+    }
+
+    /**
+     *
      * @param  \Illuminate\Http\Request  $request
      * @param  int $goalId
      * @param  int $krId
