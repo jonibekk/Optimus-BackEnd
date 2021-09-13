@@ -24,7 +24,7 @@ class GoalsService
     }
 
     // Get all goals
-    public function getGoalWithKrAndActions(int $goalId)
+    public function getGoalDetails(int $goalId)
     {
         return Goal::with([
             'user:id,avatar_url,first_name,last_name,email,bio,timezone',
@@ -55,7 +55,7 @@ class GoalsService
     // Check goal exists in a team or not.
     public function isGoalInTeam(int $goalId, int $teamId)
     {
-        $goal = Goal::where('id', $goalId)->where('team_id', $teamId)->first() ?? null;
+        $goal = Goal::with(['kr'])->where('id', $goalId)->where('team_id', $teamId)->first() ?? null;
 
         return $goal;
     }

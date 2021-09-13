@@ -60,6 +60,7 @@ class KrsService
         DB::beginTransaction();
         try {
             $goal = $goalService->isGoalInTeam($krData->goalId, $user['current_team_id']);
+
             if ($goal !== null) {
                 $newKr = new KeyResults([
                     'user_id' => $krData->userId,
@@ -71,6 +72,9 @@ class KrsService
                     'currency_type' => $krData->krCurrencyType,
                 ]);
                 $newKr->save();
+                $newProgress = floatval($goal['progress']) / (count($goal['kr']) + 1);
+                $goalService->updateGoalProgress($goal['id'], $newProgress);
+                
                 DB::commit();
             } else {
                 return false;

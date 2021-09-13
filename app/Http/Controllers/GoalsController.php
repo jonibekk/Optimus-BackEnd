@@ -46,7 +46,7 @@ class GoalsController extends Controller
      * @param  int  $goalId
      * @return \Illuminate\Http\Response
      */
-    public function getGoalWithKrAndActions(Request  $request, $goalId)
+    public function getGoalDetails(Request  $request, $goalId)
     {
         $goalService = new GoalsService();
         $response = new ResponseDto();
@@ -59,7 +59,7 @@ class GoalsController extends Controller
         }
 
         try {
-            $response->data = $goalService->getGoalWithKrAndActions(intval($goalId));
+            $response->data = $goalService->getGoalDetails(intval($goalId));
             $response->success = true;
         } catch (Exception $ex) {
             $response->success = false;

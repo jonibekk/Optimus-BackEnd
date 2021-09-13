@@ -65,7 +65,7 @@ Route::group(['middleware' => 'api'], function () {
         Route::get('/team/{teamId}/goals', [GoalsController::class, 'allGoals']);
         Route::get('/team/{teamId}/my-goals', [GoalsController::class, 'getMyGoals']);
         Route::get('/team/{teamId}/my-goals-inc-subs', [GoalsController::class, 'getGoalsIncludeSubscribed']);
-        Route::get('/{id}/with-kr-actions', [GoalsController::class, 'getGoalWithKrAndActions']);
+        Route::get('/{id}/details', [GoalsController::class, 'getGoalDetails']);
 
         Route::post('/create', [GoalsController::class, 'create']);
         Route::post('/{id}/subscribe', [GoalsController::class, 'subscribe']);
